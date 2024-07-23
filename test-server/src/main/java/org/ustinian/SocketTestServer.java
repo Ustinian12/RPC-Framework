@@ -2,14 +2,14 @@ package org.ustinian;
 
 import org.ustinian.registry.DefaultServiceRegistry;
 import org.ustinian.registry.ServiceRegistry;
-import org.ustinian.server.RpcServer;
+import org.ustinian.socket.server.SocketRpcServer;
 
-public class TestServer {
+public class SocketTestServer {
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
         ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         serviceRegistry.registerService(helloService);
-        RpcServer rpcServer = new RpcServer(serviceRegistry);
-        rpcServer.start(9998);
+        SocketRpcServer socketRpcServer = new SocketRpcServer(serviceRegistry);
+        socketRpcServer.start(9998);
     }
 }

@@ -1,7 +1,9 @@
-package org.ustinian.server;
+package org.ustinian.socket.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ustinian.RequestHandler;
+import org.ustinian.RpcServer;
 import org.ustinian.registry.ServiceRegistry;
 
 import java.io.IOException;
@@ -9,16 +11,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
 
-public class RpcServer {
+public class SocketRpcServer implements RpcServer {
     private final ExecutorService threadPool;
-    private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketRpcServer.class);
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 50;
     private static final int KEEP_ALIVE_TIME = 60;
     private RequestHandler requestHandler = new RequestHandler();
     private final ServiceRegistry serviceRegistry;
 
-    public RpcServer(ServiceRegistry serviceRegistry) {
+    public SocketRpcServer(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(100);
         ThreadFactory threadFactory = Executors.defaultThreadFactory();

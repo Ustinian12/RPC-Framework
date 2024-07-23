@@ -1,6 +1,7 @@
-package org.ustinian.client;
+package org.ustinian.socket.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ustinian.RpcClient;
 import org.ustinian.entity.RpcRequest;
 
 import java.io.IOException;
@@ -8,11 +9,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class RpcClient {
+public class SocketRpcClient implements RpcClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketRpcClient.class);
 
-    public Object sendRequest(RpcRequest rpcRequest, String host, int port) {
+    private final String host;
+    private final int port;
+
+    public SocketRpcClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    public Object sendRequest(RpcRequest rpcRequest) {
         try(Socket socket = new Socket(host, port)) {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
