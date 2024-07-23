@@ -14,7 +14,6 @@ import org.ustinian.codec.CommonDecoder;
 import org.ustinian.codec.CommonEncoder;
 import org.ustinian.netty.client.NettyClient;
 import org.ustinian.serializer.JsonSerializer;
-import org.ustinian.serializer.KryoSerializer;
 
 public class NettyServer implements RpcServer {
 
@@ -36,7 +35,7 @@ public class NettyServer implements RpcServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new CommonEncoder(new KryoSerializer()));
+                            pipeline.addLast(new CommonEncoder(new JsonSerializer()));
                             pipeline.addLast(new CommonDecoder());
                             pipeline.addLast(new NettyServerHandler());
                         }

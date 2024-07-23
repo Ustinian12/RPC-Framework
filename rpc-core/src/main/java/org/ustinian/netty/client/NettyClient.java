@@ -14,7 +14,6 @@ import org.ustinian.codec.CommonEncoder;
 import org.ustinian.entity.RpcRequest;
 import org.ustinian.entity.RpcResponse;
 import org.ustinian.serializer.JsonSerializer;
-import org.ustinian.serializer.KryoSerializer;
 
 public class NettyClient implements RpcClient {
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
@@ -37,7 +36,7 @@ public class NettyClient implements RpcClient {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         pipeline.addLast(new CommonDecoder())
-                                .addLast(new CommonEncoder(new KryoSerializer()))
+                                .addLast(new CommonEncoder(new JsonSerializer()))
                                 .addLast(new NettyClientHandler());
                     }
                 });
