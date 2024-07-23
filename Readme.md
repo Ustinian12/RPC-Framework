@@ -1,4 +1,5 @@
 # RPC框架结构
+**注意该项目是学习这个[一起写个Dubbo](https://blog.csdn.net/qq_40856284/category_10138756.html?spm=1001.2014.3001.5482)博客的产物，详细信息可以查看原博客，这个在tag里给出了完整的项目发开流程代码记录。**
 ## V1.0
 ### rpc-api
 - HelloObject: 调用接口的参数
@@ -37,3 +38,5 @@
   - NettyClientHandle:接受消息，并且将消息写入ChannelHandlerContext
   - NettyServer: 开两个group 一个用来接受连接，一个用来处理调用。
   - NettyServerHandler: 找到服务，以及参数，调用RequestHandler.handle
+## V2.1
+使用kryo作为序列化工具。
