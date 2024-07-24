@@ -39,4 +39,4 @@
   - NettyServer: 开两个group 一个用来接受连接，一个用来处理调用。
   - NettyServerHandler: 找到服务，以及参数，调用RequestHandler.handle
 ## V2.1
-使用kryo作为序列化工具。
+使用kryo作为序列化工具。 
