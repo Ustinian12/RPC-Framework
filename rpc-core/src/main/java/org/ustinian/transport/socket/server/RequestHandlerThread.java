@@ -1,4 +1,4 @@
-package org.ustinian.socket.server;
+package org.ustinian.transport.socket.server;
 
 
 import org.slf4j.Logger;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.ustinian.RequestHandler;
 import org.ustinian.entity.RpcRequest;
 import org.ustinian.entity.RpcResponse;
-import org.ustinian.registry.ServiceRegistry;
+import org.ustinian.provider.ServiceProvider;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,12 +18,12 @@ public class RequestHandlerThread implements Runnable {
 
     private Socket socket;
     private RequestHandler requestHandler;
-    private ServiceRegistry serviceRegistry;
+    private ServiceProvider serviceProvider;
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler,ServiceRegistry serviceRegistry) {
+    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceProvider serviceProvider) {
         this.socket = socket;
         this.requestHandler = requestHandler;
-        this.serviceRegistry = serviceRegistry;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -32,9 +32,9 @@ public class RequestHandlerThread implements Runnable {
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
             RpcRequest request = (RpcRequest) ois.readObject();
             String interfaceName = request.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
-            Object returnObject = requestHandler.handle(request, service);
-            oos.writeObject(RpcResponse.success(returnObject));
+//            Object service = serviceProvider.getService(interfaceName);
+//            Object returnObject = requestHandler.handle(request, service);
+//            oos.writeObject(RpcResponse.success(returnObject));
             oos.flush();
         } catch (IOException | ClassNotFoundException e) {
             logger.error("调用或发送时有错误发生：", e);

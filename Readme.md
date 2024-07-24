@@ -39,4 +39,29 @@
   - NettyServer: 开两个group 一个用来接受连接，一个用来处理调用。
   - NettyServerHandler: 找到服务，以及参数，调用RequestHandler.handle
 ## V2.1
-使用kryo作为序列化工具。 
+使用kryo作为序列化工具。
+## V3
+**1.遇到了一个问题，为什么NettyServer已经开了多线程还要在Handler里面再开一个线程池很奇怪。**
+**2.在使用Protobuf进行序列化的时候为什么序列化这个过程不使用RuntimeSchema.getSchema(clazz);
+仅仅在反序列化的时候使用。**
+### 服务端
+- rpc-core
+  - 加了一个注册服务
+  - 处理的时候加了一个业务的线程池，来回答第一个问题。业务的逻辑有的时候很慢。 
+### 客户端
+- rpc-core
+  - 客户端要实例化一个注册中心，方便可以直接查找类变量。
+  - 多线程采用原子操作。AtomicReference<Object> result = new AtomicReference<>(null);
+  - 发送请求和接收response
+### 注册中心
+- 注册中心采用nacos，这个可以直接用docker hup上的直接开一个服务就可以用了。
+- rpc-core:
+  - provider: 服务器使用
+    - addServiceProvider：添加服务，服务器开放服务额时候用。将服务添加到hash表中。
+    - getServiceProvider：查找服务。
+  - registry:注册中心用？
+    - register:注册服务，将服务提供者，将其ip地址和端口号存放到注册中心中。
+    - lookupService：查找服务，找到服务提供者，ip地址和端口号。
+### 基础服务部分
+- 添加了一个新的序列化方法，ProtobufSerializer(不太了解，仅仅会用)
+- 

@@ -1,12 +1,11 @@
-package org.ustinian;
+package org.ustinian.transport;
 
-import org.ustinian.socket.client.SocketRpcClient;
 import org.ustinian.entity.RpcRequest;
-import org.ustinian.entity.RpcResponse;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.UUID;
 
 public class RpcClientProxy implements InvocationHandler {
 
@@ -19,7 +18,7 @@ public class RpcClientProxy implements InvocationHandler {
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        RpcRequest request = new RpcRequest(method.getDeclaringClass().getName(),
+        RpcRequest request = new RpcRequest(UUID.randomUUID().toString(), method.getDeclaringClass().getName(),
                 method.getName(), args, method.getParameterTypes());
         return client.sendRequest(request);
     }

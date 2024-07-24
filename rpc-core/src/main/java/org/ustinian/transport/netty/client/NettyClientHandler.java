@@ -1,4 +1,4 @@
-package org.ustinian.netty.client;
+package org.ustinian.transport.netty.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

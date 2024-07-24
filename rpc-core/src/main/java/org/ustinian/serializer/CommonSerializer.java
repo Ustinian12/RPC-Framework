@@ -1,5 +1,6 @@
 package org.ustinian.serializer;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
 public interface CommonSerializer {
@@ -12,6 +13,8 @@ public interface CommonSerializer {
                 return new KryoSerializer();
             case 1:
                 return new JsonSerializer();
+            case 2:
+                return new ProtobufSerializer();
             default:
                 return null;
         }

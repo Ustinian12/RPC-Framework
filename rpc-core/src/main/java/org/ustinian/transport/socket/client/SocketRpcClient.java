@@ -1,7 +1,8 @@
-package org.ustinian.socket.client;
+package org.ustinian.transport.socket.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ustinian.RpcClient;
+import org.ustinian.serializer.CommonSerializer;
+import org.ustinian.transport.RpcClient;
 import org.ustinian.entity.RpcRequest;
 
 import java.io.IOException;
@@ -32,6 +33,11 @@ public class SocketRpcClient implements RpcClient {
             logger.error("调用时有错误发生：", e);
             return null;
         }
+    }
+
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+
     }
 
 }

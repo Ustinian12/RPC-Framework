@@ -1,6 +1,7 @@
 package org.ustinian;
 
-import org.ustinian.socket.client.SocketRpcClient;
+import org.ustinian.transport.RpcClientProxy;
+import org.ustinian.transport.socket.client.SocketRpcClient;
 
 public class SocketTestClient {
     public static void main(String[] args) {
