@@ -6,10 +6,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ustinian.enumeration.RpcError;
 import org.ustinian.exception.RpcException;
+import org.ustinian.hook.ShutdownHook;
 import org.ustinian.provider.ServiceProvider;
 import org.ustinian.provider.ServiceProviderImpl;
 import org.ustinian.registry.NacosServiceRegistry;
@@ -20,6 +22,8 @@ import org.ustinian.codec.CommonDecoder;
 import org.ustinian.codec.CommonEncoder;
 import org.ustinian.transport.netty.client.NettyClient;
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
+
 
 public class NettyServer implements RpcServer {
 
@@ -31,17 +35,19 @@ public class NettyServer implements RpcServer {
     private CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
+        this(host, port, DEFAULT_SERIALIZER);
+    }
+
+    public NettyServer(String host, int port, Integer serializer) {
         this.host = host;
         this.port = port;
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
+        this.serializer = CommonSerializer.getByCode(serializer);
     }
-    public void setSerializer(CommonSerializer serializer) {
-        this.serializer = serializer;
-    }
-
     @Override
     public void start() {
+        ShutdownHook.getShutdownHook().addClearAllHook();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -56,9 +62,10 @@ public class NettyServer implements RpcServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new CommonEncoder(serializer));
-                            pipeline.addLast(new CommonDecoder());
-                            pipeline.addLast(new NettyServerHandler());
+                            pipeline.addLast(new CommonEncoder(serializer))
+                                    .addLast(new CommonDecoder())
+                                    .addLast(new NettyServerHandler())
+                                    .addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host, port).sync();

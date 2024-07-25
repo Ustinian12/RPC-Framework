@@ -4,6 +4,12 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
 public interface CommonSerializer {
+    Integer KRYO_SERIALIZER = 0;
+    Integer JSON_SERIALIZER = 1;
+    Integer HESSIAN_SERIALIZER = 2;
+    Integer PROTOBUF_SERIALIZER = 3;
+    Integer DEFAULT_SERIALIZER = KRYO_SERIALIZER;
+
     byte[] serialize(Object obj);
     Object deserialize(byte[] bytes, Class<?> clazz);
     int getCode();
@@ -13,7 +19,7 @@ public interface CommonSerializer {
                 return new KryoSerializer();
             case 1:
                 return new JsonSerializer();
-            case 2:
+            case 3:
                 return new ProtobufSerializer();
             default:
                 return null;

@@ -32,4 +32,5 @@ public class RpcRequest implements Serializable {
      */
     private Class<?>[] paramTypes;
 
+    private Boolean heartBeat;
 }

@@ -35,9 +35,5 @@ public class SocketRpcClient implements RpcClient {
         }
     }
 
-    @Override
-    public void setSerializer(CommonSerializer serializer) {
-
-    }
 
 }
