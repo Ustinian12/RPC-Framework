@@ -17,6 +17,7 @@ import org.ustinian.provider.ServiceProviderImpl;
 import org.ustinian.registry.NacosServiceRegistry;
 import org.ustinian.registry.ServiceRegistry;
 import org.ustinian.serializer.CommonSerializer;
+import org.ustinian.transport.AbstractRpcServer;
 import org.ustinian.transport.RpcServer;
 import org.ustinian.codec.CommonDecoder;
 import org.ustinian.codec.CommonEncoder;
@@ -25,13 +26,13 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 
-public class NettyServer implements RpcServer {
+public class NettyServer extends AbstractRpcServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
-    private final String host;
-    private final int port;
-    private final ServiceRegistry serviceRegistry;
-    private final ServiceProvider serviceProvider;
+//    private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
+//    private final String host;
+//    private final int port;
+//    private final ServiceRegistry serviceRegistry;
+//    private final ServiceProvider serviceProvider;
     private CommonSerializer serializer;
 
     public NettyServer(String host, int port) {
@@ -44,6 +45,7 @@ public class NettyServer implements RpcServer {
         this.serviceRegistry = new NacosServiceRegistry();
         this.serviceProvider = new ServiceProviderImpl();
         this.serializer = CommonSerializer.getByCode(serializer);
+        scanServices();
     }
     @Override
     public void start() {
@@ -79,14 +81,14 @@ public class NettyServer implements RpcServer {
         }
     }
 
-    @Override
-    public <T> void publishService(Object service, Class<T> serviceClass) {
-        if(serializer == null) {
-            logger.error("未设置序列化器");
-            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
-        }
-        serviceProvider.addServiceProvider(service);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-        start();
-    }
+//    @Override
+//    public <T> void publishService(Object service, Class<T> serviceClass) {
+//        if(serializer == null) {
+//            logger.error("未设置序列化器");
+//            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
+//        }
+//        serviceProvider.addServiceProvider(service);
+//        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
+//        start();
+//    }
 }

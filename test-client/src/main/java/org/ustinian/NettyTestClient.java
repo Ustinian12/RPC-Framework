@@ -15,5 +15,7 @@ public class NettyTestClient {
         String res = helloService.hello(helloObject);
         System.out.println(res);
         System.out.println("****************************************");
+        ByeService byeService = rpcClientProxy.getProxy(ByeService.class);
+        System.out.println(byeService.bye("Netty"));
     }
 }
