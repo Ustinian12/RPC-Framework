@@ -18,8 +18,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     private static RequestHandler requestHandler;
 
     public NettyServerHandler() {
-    this.requestHandler = SingletonFactory.getInstance(RequestHandler.class);
-}
+        this.requestHandler = SingletonFactory.getInstance(RequestHandler.class);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {

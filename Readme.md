@@ -65,17 +65,64 @@
   - provider: 服务器使用
     - addServiceProvider：添加服务，服务器开放服务额时候用。将服务添加到hash表中。
     - getServiceProvider：查找服务。
-  - registry:注册中心用？
+  - registry:注册中心用
     - register:注册服务，将服务提供者，将其ip地址和端口号存放到注册中心中。
     - lookupService：查找服务，找到服务提供者，ip地址和端口号。
 ### 4.基础服务部分
-- 添加了一个新的序列化方法，ProtobufSerializer(不太了解，仅仅会用)
+- 添加了一个新的序列化方法，ProtobufSerializer
 ## V3.1
-这个版本实现的功能如下： 
 1.实现了负载均衡。loadbalancer
 2.添加了心跳机制，以及自动注销。
-- 1.负载均衡中的轮询应该是没有用的，index是个人的。
-- 用了新的类，但是不太清楚为啥要用，可以和上个版本进行比较学习，仔细看看。
-- 架构上应该有修改。
+
+这个版本实现的功能如下： 
+
+- SingletonFactory：单例，保证该类只有一个示例。
+- ThreadPoolFactory.shutdown：关闭后自动注销所有服务。
+- NacosUtil：将nacos的实现单独用一个类封装。该类的NacosUtil.address是不是应该也做成一个HashMap？或者说知道那个address挂了。
+- ShutdownHook：addClearAllHook在服务启动时添加一个线程监听服务有没有结束，如果结束了清空注册以及线程池。
+- landbalancer：负载均衡
+- NacosServiceDiscovery：这个类主要是用来通过负载均衡找服务的。
+- UnprocessedRequests：其实就是哈希表，将requestID和他们的待返回结果联系在一起。处理完了可以compete，get的地方自然就会有结果。线程安全。
+- ChannelProvider：提供channel，如果有直接从哈希表中读取，如果没有那么就根据地址新建channel。
+- NettyClient：只负责发消息了，返回一个待返回结果，等待服务器处理。
+- NettyClientHandler：在构建channel的时候用，在收到response的时候根据UnprocessedRequests告诉他好了，不用等了。+心跳
+- NettyServer：等待连接。
+- NettyServerHandler：处理客户端请求，主要就是调用相应的方法。requestHandler去处理调用那个方法。
+
+问题1:单例在哪里用了起什么作用？
+
+答：
+
+- NettyClient和NettyClientHandler中，保存一个单独的UnprocessedRequests
+
+- NettyServerHandler：保证每次调用requestHandler都是只有一个调用方法。
+
+问题2：既然通道都留给ChannelProvider为啥还要bootstrp，应该可以去掉。
+
+![image-20240725214811489](./images/image1.png)
+
 ## V3.2
-添加了@Service，@ServiceScan注解但是还需要细看。
+添加注解的目的是为了方便注册服务。
+
+但是为什么这个版本就不开任务的线程池了？
+
+@Service
+
+@ServiceScan
+
+```java
+scanServices() {
+    1.当前类是否拥有注解@ServiceScan，否报错，是继续。
+    2.查看注解的值，如果是有效信息那么就找到了查找范围，如果没有，那么就按包名查找。
+    3.遍历所有带有@Service的类，查看其接口名称。加入注册服务中。
+}    
+```
+
+```java
+ReflectUtil{
+    这个类也很简单，就是找到当前目录下的所有类，并且返回类的集合。
+}
+```
+
+
+
